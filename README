@@ -1,0 +1,50 @@
+Dinu Marian Alexandru 334CC
+Tema 4 - APD
+
+Rulare:
+	make build - creează executabilul
+	make run1 - rulează primul set de teste
+	make run2 - rulează al doilea set de teste
+	make clean - șterge executabilul
+
+ETAPA 1
+	Am folosit algoritmul ecou din laboratorul 10. Înainte de a trimite 
+	informația propriu-zisă, am trimis un char "E" (ECOU) sau "S" (SONDAJ). 
+	Dacă primeam sondaj când așteptam ecou, ștergeam intrarea respectivă din 
+	matricea de adiacență. Astfel am reușit să elimin ciclurile.
+	Pentru calcularea tabelei de rutare am folosit algoritmul Floyd Warshall
+	(Path Reconstruction). [1]
+
+ETAPA 2
+	Mai întâi parsez fișierul de intrare, apoi fiecare proces trimite un 
+	broadcast pentru a le anunța pe celelalte că sunt gată să înceapă 
+	trimiterea mesajelor. Procesele trimit mesajele ale căror sursă sunt chiar
+	ele către next_hop. După ce au inițiat trimiterea mesajelor, trimit un
+	broadcast cu mesajul "Q" (QUIT). Procesele primesc și rutează mesajele 
+	primite	până când au primit un număr de size - 1 mesaje de QUIT.
+
+ETAPA 3
+	Pentru alegerea liderul și a liderului adjunct am decis să folosesc o 
+	variantă a algoritmului ecou. Algoritmul funcționează astfel :
+	la început fiecare proces se consideră lider (leader = rank). Procesul cu
+	rankul 0 este inițiator. Acesta trimite rankul său vecinilor, vecinii fac 
+	același lucru, până când se ajunge la frunze. Ecoul este reprezentat de
+	partea în care procesele compară liderul actual cu ce au primit de la
+	celelalte procese și rețin în variabilă lider rankul minim. Acesta este
+	trimis spre părinți până când se ajunge la procesul inițiator. Acesta
+	cunoaște în acest moment liderul.
+	La final, după ce procesul inițiator a aflat liderul, acesta trimite
+	informația(liderul) spre copii. Procesul de repetă până când toate procesele
+	au aflat cine este liderul.
+	Pentru aflarea liderul adjunct se folosește același algoritm, doar că în 
+	acest caz se cunoaște liderul și aceasta nu va participa în procesul de
+	selecție al liderului adjunct.
+	Am ales să folosesc această variantă a algoritmului ecou, deoarece mi s-a
+	părut foarte asemănătoare cu algoritmul de alegere a liderului prezentat la
+	curs. Prima oară am încercat să implementez acel algoritm, dar nu am reușit
+	din cauza faptului că se bloca undeva (suspectez un Recv blocant). Nu am
+	reușit să înțeleg pe deplin de ce procesele primesc n (=size) mesaje de wake
+	up, când mie mi se părea că nu toate primesc n, ci unele pot primi n-1.
+	Sper să fie acceptată și varianta propusă de mine.
+
+[1] http://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
